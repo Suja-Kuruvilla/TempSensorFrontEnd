@@ -1,4 +1,9 @@
-.line-Class{
+.line-Class1{
     fill: none;
-    stroke : black;
+    stroke : rgb(49, 8, 174);
+}
+
+.line-Class2{
+    fill: none;
+    stroke : rgb(174, 8, 91);
 }

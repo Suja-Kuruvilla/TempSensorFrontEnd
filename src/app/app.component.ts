@@ -8,7 +8,7 @@ import * as d3Array from 'd3';
 import * as d3Axis from 'd3';
 import * as timeFormat from 'd3';
 
-
+/**This code needs refactoring to make use of code reuse for sure */
 
 @Component({
   selector: 'app-root',
@@ -16,11 +16,16 @@ import * as timeFormat from 'd3';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'angular-temp-monitoring';
+  Location1 = ``;
+  Location2 = ``;
   subscription: Subscription;
 
 
-  dataBasement: any[] = [
+  dataLocation1: any[] = [
+    
+  ];
+
+  dataLocation2: any[] = [
     
   ];
 
@@ -52,19 +57,39 @@ export class AppComponent {
           
           console.log("messge from the socket "+ room + " "+ temp + " " + dateUpdated);
           if(room.search(`sunroom`) != -1){
-            this.dataBasement.push({"date": dateUpdated, "temp": temp});
+            this.Location1 = `SunRoom`;
+            this.dataLocation1.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
           }
 
-          this.dataBasement.forEach(element => {
+          if(room.search(`basement`) != -1){
+            this.Location2 = `Basement`;
+            this.dataLocation2.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
+          }
+
+          console.log(`****************************** Location1 **************************`);
+          this.dataLocation1.forEach(element => {
             console.log(element.date, element.temp);
             
           });
+
+          console.log(`****************************** Location2 **************************`);
+          this.dataLocation2.forEach(element => {
+            console.log(element.date, element.temp);
+            
+          });
+
           d3.selectAll("svg > *").remove();
 
-          if (this.dataBasement.length != 0){
+          if (this.dataLocation1.length != 0){
             this.buildSvg();
             this.addXandYAxis();
             this.drawLineAndPath();
+          }
+
+          if (this.dataLocation2.length != 0){
+            this.buildSvgLocation2();
+            this.addXandYAxisLocation2();
+            this.drawLineAndPathLocation2();
           }
         },
         err => console.log("Error from the socket"),
@@ -74,7 +99,7 @@ export class AppComponent {
   }
   
   private buildSvg() {
-    this.svg = d3.select('svg')
+    this.svg = d3.select("#location1")
       .append('g')
       .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
   }
@@ -87,18 +112,29 @@ export class AppComponent {
     // range of data configuring
     console.log(`width` + this.width + `height` + this.height);
     this.x = d3Scale.scaleTime().range([0, this.width]);
+  
     this.y = d3Scale.scaleLinear().range([this.height, 0]);
-    this.x.domain(d3.extent(this.dataBasement,  function(d) {
+    this.x.domain(d3.extent(this.dataLocation1, (d) => d.date));
+      
+      /*function(d) {
       console.log(`*********************** `+ timeFormat(d.date));
       return timeFormat(d.date);
-  }));
+  }));*/
     //this.y.domain(d3Array.extent(this.dataBasement, (d) => d.temp ));
-    this.y.domain([0, 200]);
-
+    //this.y.domain(d3.extent(this.dataBasement, (d) => d.temp));
+    this.y.domain([60, 80]);
     // Configure the X Axis
+
     this.svg.append('g')
-        .attr('transform', 'translate(0,' + this.height + ')')
-        .call(d3Axis.axisBottom(this.x));
+    .attr('transform', 'translate(0,' + this.height + ')')
+    .call(d3Axis.axisBottom(this.x));
+
+   // d3.axisBottom<Date>(this.x).tickFormat(d3.timeFormat(`%Y-%m-%dT%H:%M:%S`));
+
+
+
+
+      
     // Configure the Y Axis
     this.svg.append('g')
         .attr('class', 'axis axis--y')
@@ -106,14 +142,49 @@ export class AppComponent {
   }
 
   private drawLineAndPath() {
-
     var timeFormat = d3.timeFormat('%Y-%m-%dT%H:%M:%S');
     this.line = d3.line()
-        .x( (d: any) => this.x(timeFormat(d.date)) )
+        .x( (d: any) => this.x(d.date))
         .y( (d: any) => this.y(d.temp ));
     // Configuring line path
     this.svg.append('path')
-        .datum(this.dataBasement)
+        .datum(this.dataLocation1)
+        .attr('d', this.line);
+  }
+
+  private buildSvgLocation2() {
+    this.svg = d3.select("#location2")
+      .append('g')
+      .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
+  }
+  private addXandYAxisLocation2() {
+    // range of data configuring
+    console.log(`width` + this.width + `height` + this.height);
+    this.x = d3Scale.scaleTime().range([0, this.width]);
+  
+    this.y = d3Scale.scaleLinear().range([this.height, 0]);
+    this.x.domain(d3.extent(this.dataLocation2, (d) => d.date));
+    this.y.domain([60, 80]);
+    // Configure the X Axis
+
+    this.svg.append('g')
+    .attr('transform', 'translate(0,' + this.height + ')')
+    .call(d3Axis.axisBottom(this.x));
+
+    // Configure the Y Axis
+    this.svg.append('g')
+        .attr('class', 'axis axis--y')
+        .call(d3Axis.axisLeft(this.y));
+  }
+
+  private drawLineAndPathLocation2() {
+    var timeFormat = d3.timeFormat('%Y-%m-%dT%H:%M:%S');
+    this.line = d3.line()
+        .x( (d: any) => this.x(d.date))
+        .y( (d: any) => this.y(d.temp ));
+    // Configuring line path
+    this.svg.append('path')
+        .datum(this.dataLocation2)
         .attr('d', this.line);
   }
 }
