@@ -19,6 +19,7 @@ export class AppComponent {
   Location1 = ``;
   Location2 = ``;
   subscription: Subscription;
+  ItemsFromDb : [];
 
 
   dataLocation1: any[] = [
@@ -49,54 +50,61 @@ export class AppComponent {
        // "wss://48p78wylxg.execute-api.us-east-1.amazonaws.com/production")
       .subscribe(  
         data=> {
-          const obj = JSON.parse(data);
-          const room = obj["state"]["reported"]["location"];
-          const temp = obj["state"]["reported"]["temp"];
-          const date = obj["metadata"]["reported"]["location"]["timestamp"];
-          const dateUpdated = new Date(date * 1000);
-          
-          console.log("messge from the socket "+ room + " "+ temp + " " + dateUpdated);
-          if(room.search(`sunroom`) != -1){
-            this.Location1 = `SunRoom`;
-            this.dataLocation1.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
-          }
+            const obj = JSON.parse(data);
+            if (obj["state"]  != undefined) {
+                const room = obj["state"]["reported"]["location"];
+                const temp = obj["state"]["reported"]["temp"];
+                const date = obj["metadata"]["reported"]["location"]["timestamp"];
+                const dateUpdated = new Date(date * 1000);
+                
+                console.log("messge from the socket "+ room + " "+ temp + " " + dateUpdated);
+                if(room.search(`sunroom`) != -1){
+                  this.Location1 = `SunRoom`;
+                  this.dataLocation1.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
+                }
 
-          if(room.search(`basement`) != -1){
-            this.Location2 = `Basement`;
-            this.dataLocation2.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
-          }
+                if(room.search(`basement`) != -1){
+                  this.Location2 = `Basement`;
+                  this.dataLocation2.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
+                }
 
-          console.log(`****************************** Location1 **************************`);
-          this.dataLocation1.forEach(element => {
-            console.log(element.date, element.temp);
-            
-          });
+                console.log(`****************************** Location1 **************************`);
+                this.dataLocation1.forEach(element => {
+                  console.log(element.date, element.temp);
+                  
+                });
 
-          console.log(`****************************** Location2 **************************`);
-          this.dataLocation2.forEach(element => {
-            console.log(element.date, element.temp);
-            
-          });
+                console.log(`****************************** Location2 **************************`);
+                this.dataLocation2.forEach(element => {
+                  console.log(element.date, element.temp);
+                  
+                });
 
-          d3.selectAll("svg > *").remove();
+                d3.selectAll("svg > *").remove();
 
-          if (this.dataLocation1.length != 0){
-            this.buildSvg();
-            this.addXandYAxis();
-            this.drawLineAndPath();
-          }
+                if (this.dataLocation1.length != 0){
+                  this.buildSvg();
+                  this.addXandYAxis();
+                  this.drawLineAndPath();
+                }
 
-          if (this.dataLocation2.length != 0){
-            this.buildSvgLocation2();
-            this.addXandYAxisLocation2();
-            this.drawLineAndPathLocation2();
-          }
-        },
-        err => console.log("Error from the socket"),
-        () => console.log("observable stream is complete")
-      );
+                if (this.dataLocation2.length != 0){
+                  this.buildSvgLocation2();
+                  this.addXandYAxisLocation2();
+                  this.drawLineAndPathLocation2();
+                }
+              }
+              else if(obj["dbData"] != undefined) {
+                this.ItemsFromDb = obj["dbData"]["Items"];
+                console.log(`Items in ItemsFromDb` + this.ItemsFromDb.length);
+              }
+            },
+            err => console.log("Error from the socket"),
+            () => console.log("observable stream is complete")
+          );
+  
+    }
 
-  }
   
   private buildSvg() {
     this.svg = d3.select("#location1")
@@ -186,5 +194,14 @@ export class AppComponent {
     this.svg.append('path')
         .datum(this.dataLocation2)
         .attr('d', this.line);
+  }
+
+
+  GetTemps(){
+    var obj = new Object();
+     obj["action"] = "GetTemps";
+
+   var jsonString= JSON.stringify(obj);
+    this.webSocketService.sendRequest(JSON.stringify(obj));
   }
 }

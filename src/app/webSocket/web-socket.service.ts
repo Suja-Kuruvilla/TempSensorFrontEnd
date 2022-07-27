@@ -26,6 +26,11 @@ export class WebSocketService {
       );
     }
 
+    sendRequest(req: string): void{
+      this.socket.send(req);
+      console.log(`Sending requewt to websocket`);
+    }
+
 
 }
 
