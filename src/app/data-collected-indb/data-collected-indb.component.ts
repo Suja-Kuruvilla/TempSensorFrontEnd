@@ -94,9 +94,15 @@ export class DataCollectedIndbComponent implements OnInit, OnChanges {
     this.y.domain([60, 80]);
     // Configure the X Axis
 
+    var xAxis = d3.axisBottom<Date>(this.x).tickFormat(d3.timeFormat(`%m/%d/%Y %H:%M`)).ticks(50);
     this.svg.append('g')
     .attr('transform', 'translate(0,' + this.height + ')')
-    .call(d3Axis.axisBottom(this.x).ticks(50));
+    .call(xAxis)
+    .selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
 
 

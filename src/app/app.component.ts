@@ -134,16 +134,17 @@ export class AppComponent {
     this.y.domain([60, 80]);
     // Configure the X Axis
 
+    var xAxis = d3.axisBottom<Date>(this.x).tickFormat(d3.timeFormat(`%m/%d/%Y %H:%M`)).ticks(this.dataLocation1.length);
+
     this.svg.append('g')
     .attr('transform', 'translate(0,' + this.height + ')')
-    .call(d3Axis.axisBottom(this.x));
+    .call(xAxis)
+    .selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
-   // d3.axisBottom<Date>(this.x).tickFormat(d3.timeFormat(`%Y-%m-%dT%H:%M:%S`));
-
-
-
-
-      
     // Configure the Y Axis
     this.svg.append('g')
         .attr('class', 'axis axis--y')
@@ -176,9 +177,15 @@ export class AppComponent {
     this.y.domain([60, 80]);
     // Configure the X Axis
 
+    var xAxis = d3.axisBottom<Date>(this.x).tickFormat(d3.timeFormat(`%m/%d/%Y %H:%M`)).ticks(this.dataLocation2.length);
     this.svg.append('g')
     .attr('transform', 'translate(0,' + this.height + ')')
-    .call(d3Axis.axisBottom(this.x));
+    .call(xAxis)
+    .selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
     // Configure the Y Axis
     this.svg.append('g')
