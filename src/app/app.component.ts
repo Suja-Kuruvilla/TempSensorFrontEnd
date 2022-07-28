@@ -40,7 +40,7 @@ export class AppComponent {
 
   constructor (private webSocketService: WebSocketService) {
     // configure margins and width/height of the graph
-    this.width = 960 - this.margin.left - this.margin.right;
+    this.width = 960; //- this.margin.left - this.margin.right;
     this.height = 500 - this.margin.top - this.margin.bottom;
   }
 
@@ -80,7 +80,8 @@ export class AppComponent {
                   
                 });
 
-                d3.selectAll("svg > *").remove();
+                d3.select("#location1").selectAll("svg > *").remove();
+                d3.select("#location2").selectAll("svg > *").remove();
 
                 if (this.dataLocation1.length != 0){
                   this.buildSvg();

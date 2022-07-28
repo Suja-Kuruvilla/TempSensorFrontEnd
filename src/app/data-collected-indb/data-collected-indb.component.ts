@@ -19,7 +19,7 @@ export class DataCollectedIndbComponent implements OnInit, OnChanges {
   ];
 
 
-  private margin = {top: 20, right: 0, bottom: 30, left: 50};
+  private margin = {top: 20, right: 20, bottom: 30, left: 50};
   private width: number;
   private height: number;
   private x: any;
@@ -27,8 +27,8 @@ export class DataCollectedIndbComponent implements OnInit, OnChanges {
   private svg: any;
   private line: d3Shape.Line<[number, number]>; // this is line defination
   constructor() { 
-    this.width = 2500 - this.margin.left - this.margin.right;
-    this.height = 500 - this.margin.top - this.margin.bottom;
+    this.width = 2000 - this.margin.left - this.margin.right;
+    this.height = 300 - this.margin.top - this.margin.bottom;
   }
 
   ngOnInit(): void {
