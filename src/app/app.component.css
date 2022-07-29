@@ -7,3 +7,9 @@
     fill: none;
     stroke : rgb(174, 8, 91);
 }
+
+.centerHorizontal{
+    text-align: center;
+    margin: auto;
+    width: 100%;
+}
