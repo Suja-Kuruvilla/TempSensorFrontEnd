@@ -57,7 +57,6 @@ export class AppComponent {
                 const date = obj["metadata"]["reported"]["location"]["timestamp"];
                 const dateUpdated = new Date(date * 1000);
                 
-                console.log("messge from the socket "+ room + " "+ temp + " " + dateUpdated);
                 if(room.search(`sunroom`) != -1){
                   this.Location1 = `SunRoom`;
                   this.dataLocation1.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
@@ -68,15 +67,15 @@ export class AppComponent {
                   this.dataLocation2.push({"date": dateUpdated, "temp": Math.round(temp).toFixed(1)});
                 }
 
-                console.log(`****************************** Location1 **************************`);
+                //console.log(`************ ${this.Location1} ***************`);
                 this.dataLocation1.forEach(element => {
-                  console.log(element.date, element.temp);
+                  //console.log(element.date, element.temp);
                   
                 });
 
-                console.log(`****************************** Location2 **************************`);
+               // console.log(`********** ${this.Location2} *****************`);
                 this.dataLocation2.forEach(element => {
-                  console.log(element.date, element.temp);
+                  //console.log(element.date, element.temp);
                   
                 });
 
@@ -97,11 +96,10 @@ export class AppComponent {
               }
               else if(obj["dbData"] != undefined) {
                 this.ItemsFromDb = obj["dbData"]["Items"];
-                console.log(`Items in ItemsFromDb` + this.ItemsFromDb.length);
               }
             },
             err => console.log("Error from the socket"),
-            () => console.log("observable stream is complete")
+            () => console.log("Observable stream is complete")
           );
   
     }
@@ -119,21 +117,13 @@ export class AppComponent {
 
 
     // range of data configuring
-    console.log(`width` + this.width + `height` + this.height);
     this.x = d3Scale.scaleTime().range([0, this.width]);
   
     this.y = d3Scale.scaleLinear().range([this.height, 0]);
     this.x.domain(d3.extent(this.dataLocation1, (d) => d.date));
       
-      /*function(d) {
-      console.log(`*********************** `+ timeFormat(d.date));
-      return timeFormat(d.date);
-  }));*/
-    //this.y.domain(d3Array.extent(this.dataBasement, (d) => d.temp ));
-    //this.y.domain(d3.extent(this.dataBasement, (d) => d.temp));
     this.y.domain([60, 80]);
     // Configure the X Axis
-
     var xAxis = d3.axisBottom<Date>(this.x).tickFormat(d3.timeFormat(`%m/%d/%Y %H:%M`)).ticks(this.dataLocation1.length);
 
     this.svg.append('g')
@@ -169,7 +159,6 @@ export class AppComponent {
   }
   private addXandYAxisLocation2() {
     // range of data configuring
-    console.log(`width` + this.width + `height` + this.height);
     this.x = d3Scale.scaleTime().range([0, this.width]);
   
     this.y = d3Scale.scaleLinear().range([this.height, 0]);

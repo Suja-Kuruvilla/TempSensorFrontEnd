@@ -35,19 +35,19 @@ export class DataCollectedIndbComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes : SimpleChanges){
-     // console.log(this.dataFromDb);
      var temparray : any = [];
      for (var i=0; i<this.dataFromDb.length; i++) {
         const obj = this.dataFromDb[i];
-        console.log(obj);
         const location = obj["location_name"];
         if (location.search(`sunroom`) != -1){
          
           temparray.push({"date": obj["sample_time"], "temp": Math.round(obj["temp"]).toFixed(1)});
-
-
         }
       };
+
+      this.dataLocation1.length = 0;
+      d3.select("#fromDb").selectAll("svg > *").remove();
+
       temparray.sort((a, b) => a.date > b.date ? 1 : -1);
       for (var i=0; i<temparray.length; i++) {
          const dateUpdated = new Date(temparray[i].date * 1000);
@@ -55,7 +55,7 @@ export class DataCollectedIndbComponent implements OnInit, OnChanges {
       }
       
       this.dataLocation1.forEach(element => {
-        console.log(element.date, element.temp);
+        //console.log(element.date, element.temp);
         
       });
 

@@ -11,7 +11,7 @@ export class WebSocketService {
       return new Observable(
         observer => {
           this.socket.onmessage = (event)=> {
-            console.log("WebSocketService Receiving" + event.data);
+            console.log("Receiving from AWS " + event.data);
             observer.next(event.data);
           }
           this.socket.onerror = (event)=> {
@@ -28,7 +28,7 @@ export class WebSocketService {
 
     sendRequest(req: string): void{
       this.socket.send(req);
-      console.log(`Sending requewt to websocket`);
+      console.log(`Sending request to AWS`);
     }
 
 
